@@ -5,7 +5,7 @@ Code Templates
 * Available
 
 => Graph
-  - Vertex
+  ->Vertex
   - Edge
   - Graph
 => Sorting Algorithms
