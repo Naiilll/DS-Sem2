@@ -1,6 +1,10 @@
 package Notes.Graph;
 
+import DS.LinkedList;
+
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 class Vertex <T extends Comparable<T>, N extends Comparable<N>> {
     T vertexInfo;
@@ -252,4 +256,87 @@ public class Graph<T extends Comparable<T>, N extends Comparable<N>>{
         }
     }
 
+    /*
+
+     */
+
+    private LinkedList<T> [] adj;
+
+    /** Default constructor with number of vertices */
+    public Graph (int v){
+        size = v;
+        adj = new LinkedList[v];
+        for (int i = 0; i < v; i++) {
+            adj[i] = new LinkedList<>();
+        }
+    }
+
+    /** Add adjacency nodes when there is an edge between 2 nodes */
+    public void addEdge (T v, T w){
+        adj[getIndex(v)].add(w);      // Add w to v's list
+    }
+
+    public void dfsFunc (T v, boolean visited []){
+        visited [getIndex(v)] = true;     // mark current node as visited node
+        System.out.print(v+" ");
+        Iterator<T> i = adj[getIndex(v)].iterator();
+        while(i.hasNext()){
+            T n = i.next();
+            if(!visited[getIndex(n)]) dfsFunc(n, visited);
+        }
+    }
+
+    // Depth First Search using Stack
+    public void DFS (T v){
+        boolean visited [] = new boolean [size];
+        dfsFunc(v,visited);
+    }
+
+    // Breadth First Search using Queue
+    public void BFS (T s){
+        boolean visited [] = new boolean [size];
+        java.util.LinkedList<T> queue = new java.util.LinkedList<>();
+
+        visited[getIndex(s)] = true;
+        queue.add(s);
+        while (queue.size()!=0){
+            s = queue.poll();
+            System.out.print(s+" ");
+            Iterator<T> itr = adj[getIndex(s)].iterator();
+            while (itr.hasNext()){
+                T n = itr.next();
+                if(!visited[getIndex(n)]){
+                    visited[getIndex(n)] = true;
+                    queue.add(n);
+                }
+            }
+        }
+    }
+
+    private LinkedList <Double> neighboursCost [];
+
+
+    public static void main(String[] args) {
+        Graph<String,Integer> graph1 = new Graph<>(8);
+        graph1.addVertex("A");
+        graph1.addVertex("B");
+        graph1.addVertex("C");
+        graph1.addVertex("D");
+        graph1.addVertex("E");
+        graph1.addVertex("F");
+        graph1.addVertex("G");
+        graph1.addVertex("H");
+        graph1.addEdge("A","B");
+        graph1.addEdge("B","D");
+        graph1.addEdge("B","E");
+        graph1.addEdge("B","C");
+        graph1.addEdge("A","C");
+        graph1.addEdge("C","F");
+        graph1.addEdge("F","H");
+        graph1.addEdge("G","H");
+        graph1.addEdge("A","G");
+        graph1.BFS("A");
+        System.out.println();
+        graph1.DFS("A");
+    }
 }
