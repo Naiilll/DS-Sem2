@@ -1,6 +1,3 @@
-package DS;
-
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class LinkedList<E>  {
@@ -37,21 +34,76 @@ public class LinkedList<E>  {
         if(isEmpty()) {
             return false;
         }
-        if(head.item.equals(e) || tail.item.equals(e)) {
+        if(head.element.equals(e) || tail.element.equals(e)) {
             return true;
         }
         Node<E> current = head;
         for(int i = 1; i < size - 1; i++) {
             current = current.next;
-            if(current.item.equals(e)) { // important
+            if(current.element.equals(e)) { // important
                 return true;
             }
         }
         return false;
     }
 
-    public Iterator<E> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public java.util.Iterator<E> iterator() {
+        return new LinkedListIterator();
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException
+                    ("Index: " + index + ", Size: " + size);
+    }
+
+    private class LinkedListIterator
+            implements java.util.Iterator<E> {
+        private Node<E> current = head; // Current index
+
+        @Override
+        public boolean hasNext() {
+            return (current != null);
+        }
+
+        @Override
+        public E next() {
+            E e = current.element;
+            current = current.next;
+            return e;
+        }
+        @Override
+        public void remove() {
+            LinkedList.this.removeElement(current.element);
+        }
+    }
+
+    public boolean removeElement(E e){
+        if(!contains(e))
+            return false;
+        else {
+            Node<E> current = head;
+            Node<E> previous = null;
+
+            if (head == null)
+                return false;
+            else if (e.equals(head.element)) {
+                head = head.next;
+                if (head == null)
+                    tail = null;
+            } else {
+                while (!e.equals(current.element)) {
+                    previous = current;
+                    current = current.next;
+                }
+                previous.next = current.next;
+                if (previous.next == null)
+                    tail = previous;
+                current = null;
+            }
+            size--;
+            return true;
+        }
     }
 
     /**
@@ -60,7 +112,7 @@ public class LinkedList<E>  {
     public void clear() {
         for(Node<E> x = head; x != null;) {
             Node<E> next = x.next;
-            x.item = null;
+            x.element = null;
             x.next = null;
             x = next;
         }
@@ -87,7 +139,7 @@ public class LinkedList<E>  {
             for(int i = 0; i < index; i++) {
                 current = current.next;
             }
-            return current.item;
+            return current.element;
         }
         throw new IndexOutOfBoundsException();
     }
@@ -100,7 +152,7 @@ public class LinkedList<E>  {
     public E getFirst() {
 //        return (first != null) ? first.item : null;
         if(head != null) { // if it is not empty;
-            return head.item;
+            return head.element;
         }
         else {
             throw new NoSuchElementException();
@@ -115,7 +167,7 @@ public class LinkedList<E>  {
     public E getLast() {
 //        return (last != null) ? last.item : null;
         if(tail != null) { // if it is not empty;
-            return tail.item;
+            return tail.element;
         }
         else {
             throw new NoSuchElementException();
@@ -138,8 +190,8 @@ public class LinkedList<E>  {
             for(int i = 0; i < index; i++) {
                 current = current.next;
             }
-            returnEle = current.item;
-            current.item = element;
+            returnEle = current.element;
+            current.element = element;
         }
 
         return returnEle;
@@ -153,8 +205,8 @@ public class LinkedList<E>  {
      */
     public void replace(E e, E newE) {
         for(Node<E> x = head; x != null; x = x.next) {
-            if(x.item.equals(e)) {
-                x.item = newE;
+            if(x.element.equals(e)) {
+                x.element = newE;
                 return;
             }
         }
@@ -234,7 +286,7 @@ public class LinkedList<E>  {
                 tail = null;
             }
             size--;
-            return temp.item;
+            return temp.element;
         }
     }
 
@@ -250,7 +302,7 @@ public class LinkedList<E>  {
             Node<E> temp = head;
             head = tail = null;
             size = 0;
-            return temp.item;
+            return temp.element;
         }
         else {
             Node<E> current = head;
@@ -263,7 +315,7 @@ public class LinkedList<E>  {
             tail = current;
             tail.next = null;
             size--;
-            return temp.item;
+            return temp.element;
         }
     }
 
@@ -287,7 +339,7 @@ public class LinkedList<E>  {
             Node<E> current = previous.next;
             previous.next = current.next;
             size--;
-            return current.item;
+            return current.element;
         }
     }
 
@@ -304,7 +356,7 @@ public class LinkedList<E>  {
 //            current = current.next;
 //        }
         for(Node<E> x = head; x != null; x = x.next) {
-            if(x.item.equals(o)) {
+            if(x.element.equals(o)) {
                 return index;
             }
             index++;
@@ -325,7 +377,7 @@ public class LinkedList<E>  {
         int target = -1;
 
         for(Node<E> x = head; x != null; x = x.next) {
-            if(x.item.equals(o)) {
+            if(x.element.equals(o)) {
                 target = index;
             }
             index++;
@@ -343,8 +395,8 @@ public class LinkedList<E>  {
     public String toString() {
         StringBuilder sb = new StringBuilder("[");
         for(Node<E> x = head; x != null; x = x.next) {
-            if(x.item != null) {
-                sb.append(x.item.toString());
+            if(x.element != null) {
+                sb.append(x.element.toString());
             }
             else {
                 sb.append("null");
@@ -367,7 +419,7 @@ public class LinkedList<E>  {
 //        T[] result = (T[]) new Object[size];
         int i = 0;
         for(Node<E> x = head; x != null; x = x.next) {
-            result[i] = x.item;
+            result[i] = x.element;
             i++;
         }
 
@@ -447,25 +499,25 @@ public class LinkedList<E>  {
         for(int i = 0; i < mid; i++) {
             current = current.next;
         }
-        return current.item;
+        return current.element;
     }
 
     private static class Node<E> {
 
-        E item; // element
+        E element; // element
         Node<E> next;
 
         Node(E element, Node<E> next) {
-            this.item = element;
+            this.element = element;
             this.next = next;
         }
 
-        public E getItem() {
-            return item;
+        public E getElement() {
+            return element;
         }
 
-        public void setItem(E item) {
-            this.item = item;
+        public void setElement(E element) {
+            this.element = element;
         }
 
         public Node<E> getNext() {
